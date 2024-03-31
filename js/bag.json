@@ -1,4 +1,4 @@
-"bags":[
+[
     {"name":"John", "lastName":"Doe", "image":"1.png", "descrpition":"", "price":""},
     {"name":"Anna", "lastName":"Smith"},
     {"name":"Peter", "lastName":"Jones"}
