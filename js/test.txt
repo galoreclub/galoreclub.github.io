@@ -1,0 +1,63 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract BagRegistry {
+    struct Bag {
+        string productCode;
+        string serialNo;
+        address owner;
+        bool isForSale;
+        bool isForRent;
+        bool isForRepair;
+    }
+
+    // Mapping from bag ID (a combination of productCode and serialNo) to Bag
+    mapping(string => Bag) public bags;
+
+    // Events
+    event BagRegistered(string bagId, string productCode, string serialNo, address owner);
+    event OwnershipTransferred(string bagId, address newOwner);
+    event BagListedForSale(string bagId);
+    event BagListedForRent(string bagId);
+    event BagListedForRepair(string bagId);
+
+    // Register a new bag
+    function registerBag(string memory productCode, string memory serialNo) public {
+        string memory bagId = string(abi.encodePacked(productCode, serialNo));
+        require(bags[bagId].owner == address(0), "Bag already registered.");
+
+        bags[bagId] = Bag(productCode, serialNo, msg.sender, false, false, false);
+        emit BagRegistered(bagId, productCode, serialNo, msg.sender);
+    }
+
+    // Transfer ownership of a bag
+    function transferOwnership(string memory bagId, address newOwner) public {
+        require(bags[bagId].owner == msg.sender, "Only the owner can transfer ownership.");
+        bags[bagId].owner = newOwner;
+        emit OwnershipTransferred(bagId, newOwner);
+    }
+
+    // List a bag for sale
+    function listForSale(string memory bagId) public {
+        require(bags[bagId].owner == msg.sender, "Only the owner can list the bag for sale.");
+        bags[bagId].isForSale = true;
+        emit BagListedForSale(bagId);
+    }
+
+    // List a bag for rent
+    function listForRent(string memory bagId) public {
+        require(bags[bagId].owner == msg.sender, "Only the owner can list the bag for rent.");
+        bags[bagId].isForRent = true;
+        emit BagListedForRent(bagId);
+    }
+
+    // List a bag for repair
+    function listForRepair(string memory bagId) public {
+        require(bags[bagId].owner == msg.sender, "Only the owner can list the bag for repair.");
+        bags[bagId].isForRepair = true;
+        emit BagListedForRepair(bagId);
+    }
+
+    // Additional functions for buying, renting, and repairing bags can be added here
+    // ...
+}
